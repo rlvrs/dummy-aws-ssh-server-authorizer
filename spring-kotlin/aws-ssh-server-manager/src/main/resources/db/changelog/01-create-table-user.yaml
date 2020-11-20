@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-user
+      author: rlvrs
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: users
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: user_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    unique: true
+                    nullable: false
+                  name: username
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: aws_username
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: aws_user_id
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: password
+                  type: VARCHAR(250)
+              - column:
+                  name: is_admin
+                  type: BOOLEAN
+                  defaultValue: false
+            tableName: users

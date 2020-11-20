@@ -1,0 +1,9 @@
+# TODO: re-enable this if you need it
+spring:
+  liquibase:
+    enabled: false
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
