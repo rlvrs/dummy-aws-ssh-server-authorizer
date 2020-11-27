@@ -1,0 +1,23 @@
+server:
+  port: 8081
+
+spring:
+  liquibase:
+    url: jdbc:postgresql://localhost:5432/testdb
+    user: postgres
+    password: 123
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/testdb
+    username: myuser
+    password: mypass
+
+  data:
+    rest:
+      basePath: /api/v1
+
+aws:
+  ssm:
+    region: eu-west-1
+    endpointUri: http://localhost:4566
+    parameterPrefix: /dev

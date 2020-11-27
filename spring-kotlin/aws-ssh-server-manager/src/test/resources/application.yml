@@ -1,0 +1,14 @@
+spring:
+  liquibase:
+    enabled: false
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+
+aws:
+  ssm:
+    region: eu-west-1
+    endpointUri: http://localhost:4566
+    parameterPrefix: /test/dev/prefix
