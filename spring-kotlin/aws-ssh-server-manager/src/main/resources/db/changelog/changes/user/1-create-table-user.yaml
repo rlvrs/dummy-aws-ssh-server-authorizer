@@ -1,0 +1,63 @@
+databaseChangeLog:
+  - changeSet:
+      id: user1-create-table-user
+      author: rlvrs
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: users
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_user_id
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_tenant_id
+                    references: tenant(id)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: aws_username
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: first_name
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: last_name
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: password
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: role
+                  type: VARCHAR(250)
+                  defaultValue: false
+            tableName: users
+
+  - changeSet:
+      id: user1-unique-tenant-userawsusername-constraint
+      author:  rlvrs
+      changes:
+        - addUniqueConstraint:
+             columnNames: tenant_id, aws_username
+             constraintName: unique_tenantid_userawsusername
+             tableName: users

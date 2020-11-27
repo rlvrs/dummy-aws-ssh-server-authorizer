@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: hostgroup1-create-table-hostgroup
+      author: rlvrs
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: host_group
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_host_group_id
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_tenant_id
+                    references: tenant(id)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: matchers
+                  type: JSONB
+            tableName: host_group
+
+  - changeSet:
+      id: hostgroup1-unique-tenant-hostgroupname-constraint
+      author:  rlvrs
+      changes:
+        - addUniqueConstraint:
+            columnNames: tenant_id, name
+            constraintName: unique_tenantid_hostgroupname
+            tableName: users
