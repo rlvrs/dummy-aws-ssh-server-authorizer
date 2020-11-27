@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      id: tenant1-create-table-tenant
+      author: rlvrs
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: tenant
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_tenant
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    unique: true
+                    nullable: false
+                  name: name
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    unique: true
+                    nullable: false
+                  name: aws_api_key_ssm_name
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    unique: true
+                    nullable: false
+                  name: aws_api_secret_ssm_name
+                  type: VARCHAR(250)
+            tableName: tenant
