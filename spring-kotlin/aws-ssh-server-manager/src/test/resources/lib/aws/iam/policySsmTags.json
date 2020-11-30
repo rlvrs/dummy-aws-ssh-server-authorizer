@@ -1,0 +1,27 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowEc2DescribeInstancesBeanstalkPrd",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:Describe*",
+        "ssm:Get*",
+        "ssm:List*",
+        "ssm:StartSession",
+        "ssm:ResumeSession",
+        "ssm:TerminateSession"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "aws:RequestTag/Environment": "production",
+          "aws:RequestTag/Deployment": [
+            "beanstalk",
+            "terraform"
+          ]
+        }
+      }
+    }
+  ]
+}

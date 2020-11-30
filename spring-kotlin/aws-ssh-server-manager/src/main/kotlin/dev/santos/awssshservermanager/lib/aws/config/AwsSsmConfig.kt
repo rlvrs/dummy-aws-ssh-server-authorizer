@@ -7,8 +7,10 @@ import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.ssm.SsmClient
 import java.net.URI
 
+data class AwsSsmConfig(val parameterPrefix: String)
+
 @Configuration
-class AwsSsmConfig {
+class AwsSsmConfiguration {
     @Value("\${aws.ssm.region}")
     private val regionStr: String? = null
 
@@ -19,11 +21,8 @@ class AwsSsmConfig {
     val parameterPrefix: String? = null
 
     @Bean
-    fun parameterPrefix(): String {
-        return when (parameterPrefix) {
-            null -> ""
-            else -> parameterPrefix!!
-        }
+    fun awsSsmConfig(): AwsSsmConfig {
+        return AwsSsmConfig(parameterPrefix.orEmpty())
     }
 
     @Bean

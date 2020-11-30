@@ -1,0 +1,21 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "[POLICY_SID_STR]",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:Describe*",
+        "ssm:Get*",
+        "ssm:List*",
+        "ssm:StartSession",
+        "ssm:ResumeSession",
+        "ssm:TerminateSession"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": "[STRING_LIKE_CONDITION_OBJ]"
+      }
+    }
+  ]
+}

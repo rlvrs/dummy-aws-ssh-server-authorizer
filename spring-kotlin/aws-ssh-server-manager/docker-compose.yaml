@@ -15,7 +15,7 @@ services:
       << : *aws-common-envs
       DEFAULT_REGION: "eu-west-1"
       EDGE_PORT: "4566"
-      SERVICES: "ssm"
+      SERVICES: "ssm,iam"
       HOSTNAME: "localstack"
       DATA_DIR: "/tmp/localstack/data"
       DEBUG: "1"

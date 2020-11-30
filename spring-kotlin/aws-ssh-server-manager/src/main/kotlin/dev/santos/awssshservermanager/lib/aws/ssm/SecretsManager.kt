@@ -1,5 +1,6 @@
 package dev.santos.awssshservermanager.lib.aws.ssm
 
+import dev.santos.awssshservermanager.lib.aws.config.AwsSsmConfig
 import dev.santos.awssshservermanager.lib.aws.exception.DuplicateSecretException
 import dev.santos.awssshservermanager.lib.aws.exception.SecretNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
@@ -8,7 +9,7 @@ import software.amazon.awssdk.services.ssm.SsmClient
 import software.amazon.awssdk.services.ssm.model.*
 
 @Component
-class SecretsManager(@Autowired private val ssmClient: SsmClient, @Autowired private val parameterPrefix: String) {
+class SecretsManager(@Autowired private val ssmClient: SsmClient, @Autowired private val awsSsmConfig: AwsSsmConfig) {
     fun getSecret(name: String): String {
         val request = GetParameterRequest
             .builder()
@@ -25,7 +26,7 @@ class SecretsManager(@Autowired private val ssmClient: SsmClient, @Autowired pri
     }
 
     fun saveSecret(name: String, value: String): String {
-        val prefixedName = "${parameterPrefix}/${name}"
+        val prefixedName = "${awsSsmConfig.parameterPrefix}/${name}"
         val request = PutParameterRequest
             .builder()
             .name(prefixedName)

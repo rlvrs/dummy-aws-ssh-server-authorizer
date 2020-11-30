@@ -32,7 +32,7 @@ class TenantServiceShould {
     private lateinit var tenantService: TenantService
 
     @Test
-    fun `return HTTP 201 when the tenant is created`() {
+    fun `create a tenant successfully`() {
         val inputDto = CreateTenantDto(
                 name = "some-company",
                 awsApiKey = "super_secret_key",
@@ -59,7 +59,7 @@ class TenantServiceShould {
     }
 
     @Test
-    fun `return 409 when the tenant exists in SSM`() {
+    fun `throw an exception when the tenant exists in SSM`() {
         val inputDto = CreateTenantDto(
                 name = "some-company",
                 awsApiKey = "super_secret_key",
@@ -77,7 +77,7 @@ class TenantServiceShould {
     }
 
     @Test
-    fun `return 409 when the tenant exists in the DB`() {
+    fun `throw an exception when the tenant exists in the DB`() {
         val inputDto = CreateTenantDto(
                 name = "some-company",
                 awsApiKey = "super_secret_key",
