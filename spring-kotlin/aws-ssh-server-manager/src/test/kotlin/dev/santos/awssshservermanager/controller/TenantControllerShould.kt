@@ -20,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 @ExtendWith(SpringExtension::class)
 @WebMvcTest(controllers = [TenantController::class])
@@ -47,7 +46,6 @@ class TenantControllerShould {
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isCreated() }
-            content { MockMvcResultMatchers.status().isBadRequest }
             content { contentType(MediaType.APPLICATION_JSON) }
             content { json("{\"id\":1}") }
             content { jsonPath<Int>("$.id", Matchers.`is`(1)) }

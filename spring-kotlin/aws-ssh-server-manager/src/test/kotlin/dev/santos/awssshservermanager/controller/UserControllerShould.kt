@@ -60,7 +60,6 @@ class UserControllerShould {
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isCreated() }
-            content { MockMvcResultMatchers.status().isBadRequest }
             content { contentType(MediaType.APPLICATION_JSON) }
             content { json("{\"id\":2}") }
             content { jsonPath<Int>("$.id", Matchers.`is`(2)) }
@@ -71,7 +70,7 @@ class UserControllerShould {
     fun `return 409 when the user exists`() {
         BDDMockito.given(this.userService.create(validUserDto))
             .willAnswer{
-                throw DuplicateUserException("Tenant -1 already exists!")
+                throw DuplicateUserException("User -1 already exists!")
             }
 
         mockMvc.post("/user") {
@@ -87,7 +86,7 @@ class UserControllerShould {
     fun `return 404 when the user tenant does not exist`() {
         BDDMockito.given(this.userService.create(validUserDto))
                 .willAnswer{
-                    throw UserTenantNotFoundException("Tenant Id -1 does not exist.")
+                    throw UserTenantNotFoundException("User Id -1 does not exist.")
                 }
 
         mockMvc.post("/user") {
@@ -117,14 +116,14 @@ class UserControllerShould {
         Pair("null last name", "{\"awsUsername\":\"john.doe\",\"firstName\":\"John\",\"lastName\":null,\"password\":\"Str0ngP455!\",\"tenantId\":1}"),
         Pair("null password", "{\"awsUsername\":\"john.doe\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"password\":null,\"tenantId\":1}"),
         Pair("null tenantId", "{\"awsUsername\":\"john.doe\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"password\":null,\"tenantId\":null}"),
-    ).map { (testName: String, createTenantDtoStr: String) ->
+    ).map { (testName: String, createHostGroupDtoStr: String) ->
         DynamicTest.dynamicTest(testName) {
-            BDDMockito.given(userService.create(strToJsonObj(createTenantDtoStr)))
+            BDDMockito.given(userService.create(strToJsonObj(createHostGroupDtoStr)))
                 .willReturn(1)
 
             mockMvc.post("/user") {
                 contentType = MediaType.APPLICATION_JSON
-                content = createTenantDtoStr
+                content = createHostGroupDtoStr
                 accept = MediaType.APPLICATION_JSON
             }.andExpect {
                 status { isBadRequest() }

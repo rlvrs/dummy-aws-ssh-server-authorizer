@@ -32,20 +32,20 @@ class TenantServiceShould {
     private lateinit var tenantService: TenantService
 
     @Test
-    fun `return HTTP 201 when the tenant is created`() {
+    fun `return the new tenant id when successful`() {
         val inputDto = CreateTenantDto(
-                name = "some-company",
-                awsApiKey = "super_secret_key",
-                awsApiSecret = "super_secret_secret"
+            name = "some-company",
+            awsApiKey = "super_secret_key",
+            awsApiSecret = "super_secret_secret"
         )
         val expectedId: Long = 1
         val expectedKeyName = "key_name"
         val expectedSecretName = "secret_name"
         val expectedTenant = Tenant(
-                id = expectedId,
-                name = inputDto.toTenant().name,
-                awsApiKeySsmName = expectedKeyName,
-                awsApiSecretSsmName = expectedSecretName
+            id = expectedId,
+            name = inputDto.toTenant().name,
+            awsApiKeySsmName = expectedKeyName,
+            awsApiSecretSsmName = expectedSecretName
         )
 
         given(secretsManager.saveSecret(safeEq("some-company-api-key"), anyString()))
@@ -59,11 +59,11 @@ class TenantServiceShould {
     }
 
     @Test
-    fun `return 409 when the tenant exists in SSM`() {
+    fun `throw exception when the tenant exists in SSM`() {
         val inputDto = CreateTenantDto(
-                name = "some-company",
-                awsApiKey = "super_secret_key",
-                awsApiSecret = "super_secret_secret"
+            name = "some-company",
+            awsApiKey = "super_secret_key",
+            awsApiSecret = "super_secret_secret"
         )
 
         given(secretsManager.saveSecret(anyString(), anyString()))
@@ -77,7 +77,7 @@ class TenantServiceShould {
     }
 
     @Test
-    fun `return 409 when the tenant exists in the DB`() {
+    fun `throw exception when the tenant exists in the DB`() {
         val inputDto = CreateTenantDto(
                 name = "some-company",
                 awsApiKey = "super_secret_key",

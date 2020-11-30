@@ -4,6 +4,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(code = HttpStatus.CONFLICT)
-class DuplicateUserException(override val message: String) : RuntimeException()
+class DuplicateHostGroupException(override val message: String) : RuntimeException()
 @ResponseStatus(code = HttpStatus.NOT_FOUND)
-class UserTenantNotFoundException(override val message: String) : RuntimeException()
+class HostGroupTenantNotFoundException(override val message: String) : RuntimeException()

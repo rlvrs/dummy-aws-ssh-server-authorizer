@@ -44,4 +44,4 @@ databaseChangeLog:
         - addUniqueConstraint:
             columnNames: tenant_id, name
             constraintName: unique_tenantid_hostgroupname
-            tableName: users
+            tableName: host_group
