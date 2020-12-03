@@ -4,4 +4,4 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(code = HttpStatus.CONFLICT)
-class DuplicateTenantException(override val message: String): Exception()
+class DuplicateTenantException(override val message: String) : Exception()

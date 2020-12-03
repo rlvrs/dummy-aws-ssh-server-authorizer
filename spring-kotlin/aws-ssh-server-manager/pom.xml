@@ -18,6 +18,7 @@
 		<java.version>11</java.version>
 		<kotlin.version>1.4.10</kotlin.version>
 		<aws.sdk.v2.version>2.15.35</aws.sdk.v2.version>
+		<mapstruct.version>1.4.1.Final</mapstruct.version>
 	</properties>
 
 	<dependencyManagement>
@@ -126,6 +127,11 @@
 			<version>3.11</version>
 			<scope>test</scope>
 		</dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId>
+      <version>${mapstruct.version}</version>
+    </dependency>
 
 	</dependencies>
 
@@ -161,7 +167,139 @@
 						<version>${kotlin.version}</version>
 					</dependency>
 				</dependencies>
+        <executions>
+          <execution>
+            <id>kapt</id>
+            <goals>
+              <goal>kapt</goal>
+            </goals>
+            <configuration>
+              <sourceDirs>
+                <sourceDir>src/main/kotlin</sourceDir>
+              </sourceDirs>
+              <annotationProcessorPaths>
+                <annotationProcessorPath>
+                  <groupId>org.mapstruct</groupId>
+                  <artifactId>mapstruct-processor</artifactId>
+                  <version>${mapstruct.version}</version>
+                </annotationProcessorPath>
+              </annotationProcessorPaths>
+            </configuration>
+          </execution>
+          <execution>
+            <id>compile</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>test-compile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>test-compile</goal>
+            </goals>
+          </execution>
+        </executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>ktlint</id>
+						<phase>verify</phase>
+						<configuration>
+							<target name="ktlint">
+								<java taskname="ktlint" dir="${basedir}" fork="true" failonerror="true"
+									  classpathref="maven.plugin.classpath" classname="com.pinterest.ktlint.Main">
+									<arg value="src/**/*.kt"/>
+                  <arg value="--reporter=plain"/>
+                  <arg value="--reporter=checkstyle,output=${project.build.directory}/ktlint.xml"/>
+								</java>
+							</target>
+						</configuration>
+						<goals><goal>run</goal></goals>
+					</execution>
+					<execution>
+						<id>ktlint-format</id>
+						<configuration>
+							<target name="ktlint">
+								<java taskname="ktlint" dir="${basedir}" fork="true" failonerror="true"
+									  classpathref="maven.plugin.classpath" classname="com.pinterest.ktlint.Main">
+									<arg value="-F"/>
+									<arg value="src/**/*.kt"/>
+								</java>
+							</target>
+						</configuration>
+						<goals><goal>run</goal></goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>com.pinterest</groupId>
+						<artifactId>ktlint</artifactId>
+						<version>0.39.0</version>
+					</dependency>
+					<!-- additional 3rd party ruleset(s) can be specified here -->
+				</dependencies>
+			</plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <proc>none</proc>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+        <executions>
+          <!-- Replacing default-compile as it is treated specially by maven -->
+          <execution>
+            <id>default-compile</id>
+            <phase>none</phase>
+          </execution>
+          <!-- Replacing default-testCompile as it is treated specially by maven -->
+          <execution>
+            <id>default-testCompile</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>java-compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>java-test-compile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <id>test</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${basedir}/target/generated-sources</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 		</plugins>
 	</build>
 

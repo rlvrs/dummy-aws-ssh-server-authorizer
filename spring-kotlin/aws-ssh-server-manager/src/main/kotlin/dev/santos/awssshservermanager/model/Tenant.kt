@@ -1,14 +1,18 @@
 package dev.santos.awssshservermanager.model
 
-import javax.persistence.*
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.Table
 
 @Entity(name = "tenant")
 @Table
 class Tenant(
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  val id:Long=0,
-  val name: String = "",
-  val awsApiKeySsmName: String = "",
-  val awsApiSecretSsmName: String = ""
+  var id: Long = 0,
+  var name: String = "",
+  var awsApiKey: String = "",
+  var awsApiSecret: String = ""
 )
