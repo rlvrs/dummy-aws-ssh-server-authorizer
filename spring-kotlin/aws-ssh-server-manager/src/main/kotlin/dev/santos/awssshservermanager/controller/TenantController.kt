@@ -11,10 +11,10 @@ import javax.validation.Valid
 
 @Controller
 class TenantController(val tenantService: TenantService) {
-    @PostMapping("/tenant")
-    fun createTenant(@Valid @RequestBody createTenantDto: CreateTenantDto): ResponseEntity<String> {
-        val newTenantId = tenantService.create(createTenantDto)
-        val location: URI = URI.create("/tenant/${createTenantDto.name}")
-        return ResponseEntity.created(location).body("{\"id\":${newTenantId}}")
-    }
+  @PostMapping("/tenant")
+  fun createTenant(@Valid @RequestBody createTenantDto: CreateTenantDto): ResponseEntity<String> {
+    val newTenantId = tenantService.create(createTenantDto)
+    val location: URI = URI.create("/tenant/${createTenantDto.name}")
+    return ResponseEntity.created(location).body("{\"id\":${newTenantId}}")
+  }
 }
