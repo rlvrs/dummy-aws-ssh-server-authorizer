@@ -10,11 +10,6 @@ logging:
 
 
 aws:
-  ssm:
-    region: eu-west-1
-    endpointUri: http://localhost:4566
-    parameterPrefix: /test/dev/prefix
-
   iam:
     region: eu-west-1
     endpointUri: http://localhost:4566
