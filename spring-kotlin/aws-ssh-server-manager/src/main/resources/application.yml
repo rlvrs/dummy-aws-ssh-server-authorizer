@@ -15,9 +15,3 @@ spring:
   data:
     rest:
       basePath: /api/v1
-
-aws:
-  ssm:
-    region: eu-west-1
-    endpointUri: http://localhost:4566
-    parameterPrefix: /dev
