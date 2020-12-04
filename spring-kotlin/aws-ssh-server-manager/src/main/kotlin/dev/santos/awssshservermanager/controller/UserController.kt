@@ -11,10 +11,10 @@ import javax.validation.Valid
 
 @Controller
 class UserController(val userService: UserService) {
-    @PostMapping("/user")
-    fun createUser(@Valid @RequestBody createUserDto: CreateUserDto): ResponseEntity<String> {
-        val newUserId = userService.create(createUserDto)
-        val location: URI = URI.create("/user/${createUserDto.awsUsername}")
-        return ResponseEntity.created(location).body("{\"id\":${newUserId}}")
-    }
+  @PostMapping("/user")
+  fun createUser(@Valid @RequestBody createUserDto: CreateUserDto): ResponseEntity<String> {
+    val newUserId = userService.create(createUserDto)
+    val location: URI = URI.create("/user/${createUserDto.awsUsername}")
+    return ResponseEntity.created(location).body("{\"id\":${newUserId}}")
+  }
 }
