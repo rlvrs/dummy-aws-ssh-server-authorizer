@@ -55,7 +55,7 @@ databaseChangeLog:
 
   - changeSet:
       id: user1-unique-tenant-userawsusername-constraint
-      author:  rlvrs
+      author: rlvrs
       changes:
         - addUniqueConstraint:
             columnNames: tenant_id, aws_username

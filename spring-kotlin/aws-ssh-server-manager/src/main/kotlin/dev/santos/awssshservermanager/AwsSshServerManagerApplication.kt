@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class AwsSshServerManagerApplication
 
 fun main(args: Array<String>) {
-	runApplication<AwsSshServerManagerApplication>(*args)
+  runApplication<AwsSshServerManagerApplication>(*args)
 }
