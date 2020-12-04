@@ -9,8 +9,6 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.AwsCredentials
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
-import software.amazon.awssdk.auth.credentials.AwsCredentials
 
 @Service
 class TenantService(
@@ -36,10 +34,7 @@ class TenantService(
   fun getCredentials(tenantId: Long): AwsCredentials {
     return tenantRepository.findById(tenantId)
       .map {
-        val apiKey = secretsManager.getSecret(it.awsApiKeySsmName)
-        val apiSecret = secretsManager.getSecret(it.awsApiSecretSsmName)
-
-        return@map AwsBasicCredentials.create(apiKey, apiSecret)
+        return@map AwsBasicCredentials.create(it.awsApiKey, it.awsApiSecret)
       }.orElseThrow {
         TenantNotFoundException("Tenant id [${tenantId}] not found!")
       }

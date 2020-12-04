@@ -49,7 +49,7 @@ databaseChangeLog:
 
   - changeSet:
       id: hostgroup1-unique-tenant-hostgroupname-constraint
-      author:  rlvrs
+      author: rlvrs
       changes:
         - addUniqueConstraint:
             columnNames: tenant_id, name

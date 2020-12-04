@@ -14,7 +14,14 @@
       ],
       "Resource": "*",
       "Condition": {
-        "StringLike": {"aws:RequestTag/Environment":["production"],"aws:RequestTag/Deployment":["beanstalk"]}
+        "StringLike": {
+          "aws:RequestTag/Environment": [
+            "production"
+          ],
+          "aws:RequestTag/Deployment": [
+            "beanstalk"
+          ]
+        }
       }
     }
   ]
