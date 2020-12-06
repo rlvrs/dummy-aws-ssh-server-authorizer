@@ -2,7 +2,9 @@ package dev.santos.awssshservermanager.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dev.santos.awssshservermanager.dto.CreateHostGroupDto
+import dev.santos.awssshservermanager.dto.CreateHostGroupPolicyMatcherDto
 import dev.santos.awssshservermanager.exception.DuplicateHostGroupException
+import dev.santos.awssshservermanager.exception.HostGroupNotFoundException
 import dev.santos.awssshservermanager.exception.HostGroupTenantNotFoundException
 import dev.santos.awssshservermanager.exception.TenantNotFoundException
 import dev.santos.awssshservermanager.helper.IoHelper
@@ -11,7 +13,7 @@ import dev.santos.awssshservermanager.lib.aws.exception.DuplicatePolicyException
 import dev.santos.awssshservermanager.lib.aws.iam.PolicyManager
 import dev.santos.awssshservermanager.lib.aws.model.IamPolicy
 import dev.santos.awssshservermanager.mapper.HostGroupMapper
-import dev.santos.awssshservermanager.model.HostGroupMatcher
+import dev.santos.awssshservermanager.model.HostGroup
 import dev.santos.awssshservermanager.repository.HostGroupRepository
 import org.hibernate.exception.ConstraintViolationException
 import org.springframework.dao.DataIntegrityViolationException
@@ -55,8 +57,15 @@ class HostGroupService(
     }
   }
 
+  fun getHostGroupById(hostGroupId: Long): HostGroup {
+    return hostGroupRepository.findById(hostGroupId)
+      .orElseThrow {
+        HostGroupNotFoundException("Host group id [${hostGroupId}] not found!")
+      }
+  }
+
   private fun createPolicy(createHostGroupDto: CreateHostGroupDto): IamPolicy {
-    val hostGroup = hostGroupMapper.toHostGroup(createHostGroupDto)
+    val hostGroup = hostGroupMapper.toCreateHostGroupPolicyDto(createHostGroupDto)
 
     return policyManager.create(
       tenantService.getCredentials(hostGroup.tenantId),
@@ -65,7 +74,7 @@ class HostGroupService(
     )
   }
 
-  fun generateDocument(name: String, matchers: List<HostGroupMatcher>): String {
+  fun generateDocument(name: String, matchers: List<CreateHostGroupPolicyMatcherDto>): String {
     val mapper = jacksonObjectMapper()
     val conditionalTags = matchers
       .map { "aws:RequestTag/${it.tagName}" to it.tagValues }

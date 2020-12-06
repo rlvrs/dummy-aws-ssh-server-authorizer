@@ -30,6 +30,6 @@ class HostGroup(
   @Type(type = "jsonb")
   @Column(columnDefinition = "jsonb")
   var matchers: List<HostGroupMatcher>,
-  var policyArn: String?,
-  var policyVersionId: String?
+  var policyArn: String = "",
+  var policyVersionId: String = ""
 )

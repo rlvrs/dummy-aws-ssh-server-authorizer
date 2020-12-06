@@ -1,6 +1,7 @@
 package dev.santos.awssshservermanager.mapper
 
 import dev.santos.awssshservermanager.dto.CreateHostGroupDto
+import dev.santos.awssshservermanager.dto.CreateHostGroupPolicyDto
 import dev.santos.awssshservermanager.lib.aws.model.IamPolicy
 import dev.santos.awssshservermanager.model.HostGroup
 import org.mapstruct.InjectionStrategy
@@ -21,5 +22,5 @@ interface HostGroupMapper {
   )
   fun toHostGroup(createHostGroupDto: CreateHostGroupDto, iamPolicy: IamPolicy): HostGroup
 
-  fun toHostGroup(createHostGroupDto: CreateHostGroupDto): HostGroup
+  fun toCreateHostGroupPolicyDto(createHostGroupDto: CreateHostGroupDto): CreateHostGroupPolicyDto
 }

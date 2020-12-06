@@ -1,6 +1,8 @@
 package dev.santos.awssshservermanager.service
 
 import dev.santos.awssshservermanager.dto.CreateHostGroupDto
+import dev.santos.awssshservermanager.dto.CreateHostGroupPolicyDto
+import dev.santos.awssshservermanager.dto.CreateHostGroupPolicyMatcherDto
 import dev.santos.awssshservermanager.dto.HostGroupMatcherDto
 import dev.santos.awssshservermanager.helper.ResourceHelper
 import dev.santos.awssshservermanager.helper.minifyJsonStr
@@ -62,12 +64,23 @@ class HostGroupServiceShould {
     policyArn = "",
     policyVersionId = ""
   )
+  private val validCreateHostGroupPolicyDto = CreateHostGroupPolicyDto(
+    tenantId = 1L,
+    name = validInputDto.name!!,
+    matchers = validInputDto.matchers!!.map {
+      CreateHostGroupPolicyMatcherDto(
+        it.tagName!!,
+        it.tagValues!!
+      )
+    }
+  )
 
   @Test
   fun `generate a document successfully`() {
     val expectedDocument = ResourceHelper.readAsString("/service/hostgroup/expectedPolicyDocument.json")
 
-    val generatedDocument = hostGroupService.generateDocument(validHostGroup.name, validHostGroup.matchers)
+    val generatedDocument =
+      hostGroupService.generateDocument(validHostGroup.name, validCreateHostGroupPolicyDto.matchers)
 
     assertThat(minifyJsonStr(generatedDocument)).isEqualTo(minifyJsonStr(expectedDocument))
   }
@@ -95,8 +108,8 @@ class HostGroupServiceShould {
       .willReturn(expectedIamPolicy)
     given(hostGroupMapper.toHostGroup(validInputDto, expectedIamPolicy))
       .willReturn(expectedHostGroup)
-    given(hostGroupMapper.toHostGroup(validInputDto))
-      .willReturn(expectedHostGroup)
+    given(hostGroupMapper.toCreateHostGroupPolicyDto(validInputDto))
+      .willReturn(validCreateHostGroupPolicyDto)
     given(hostGroupRepository.save(any(HostGroup::class.java)))
       .willReturn(expectedHostGroup)
 

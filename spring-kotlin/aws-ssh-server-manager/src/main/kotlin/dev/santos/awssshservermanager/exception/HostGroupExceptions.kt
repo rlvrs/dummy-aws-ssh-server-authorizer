@@ -8,3 +8,6 @@ class DuplicateHostGroupException(override val message: String) : RuntimeExcepti
 
 @ResponseStatus(code = HttpStatus.NOT_FOUND)
 class HostGroupTenantNotFoundException(override val message: String) : RuntimeException()
+
+@ResponseStatus(code = HttpStatus.NOT_FOUND)
+class HostGroupNotFoundException(override val message: String) : RuntimeException()
