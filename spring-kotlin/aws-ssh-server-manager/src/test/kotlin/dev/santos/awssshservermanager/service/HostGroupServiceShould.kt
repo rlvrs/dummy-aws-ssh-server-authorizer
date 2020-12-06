@@ -50,12 +50,24 @@ class HostGroupServiceShould {
       HostGroupMatcherDto("Deployment", listOf("beanstalk"))
     )
   )
+  private val validHostGroup = HostGroup(
+    tenantId = 1L,
+    name = validInputDto.name!!,
+    matchers = validInputDto.matchers!!.map {
+      HostGroupMatcher(
+        it.tagName!!,
+        it.tagValues!!
+      )
+    },
+    policyArn = "",
+    policyVersionId = ""
+  )
 
   @Test
   fun `generate a document successfully`() {
     val expectedDocument = ResourceHelper.readAsString("/service/hostgroup/expectedPolicyDocument.json")
 
-    val generatedDocument = hostGroupService.generateDocument(validInputDto.name, validInputDto.matchers)
+    val generatedDocument = hostGroupService.generateDocument(validHostGroup.name, validHostGroup.matchers)
 
     assertThat(minifyJsonStr(generatedDocument)).isEqualTo(minifyJsonStr(expectedDocument))
   }
@@ -70,18 +82,20 @@ class HostGroupServiceShould {
     )
     val expectedHostGroup = HostGroup(
       id = expectedId,
-      tenantId = validInputDto.tenantId,
-      name = validInputDto.name,
-      matchers = validInputDto.matchers.map { HostGroupMatcher(it.tagName, it.tagValues) },
+      tenantId = validHostGroup.tenantId,
+      name = validHostGroup.name,
+      matchers = validHostGroup.matchers.map { HostGroupMatcher(it.tagName, it.tagValues) },
       policyArn = expectedIamPolicy.arn,
       policyVersionId = expectedIamPolicy.versionId
     )
 
-    given(tenantService.getCredentials(safeEq(validInputDto.tenantId)))
+    given(tenantService.getCredentials(safeEq(validHostGroup.tenantId)))
       .willReturn(awsCredentials)
-    given(policyManager.create(safeEq(awsCredentials), safeEq(validInputDto.name), safeEq(expectedIamPolicy.document)))
+    given(policyManager.create(safeEq(awsCredentials), safeEq(validHostGroup.name), safeEq(expectedIamPolicy.document)))
       .willReturn(expectedIamPolicy)
     given(hostGroupMapper.toHostGroup(validInputDto, expectedIamPolicy))
+      .willReturn(expectedHostGroup)
+    given(hostGroupMapper.toHostGroup(validInputDto))
       .willReturn(expectedHostGroup)
     given(hostGroupRepository.save(any(HostGroup::class.java)))
       .willReturn(expectedHostGroup)

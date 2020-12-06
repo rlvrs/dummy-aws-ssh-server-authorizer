@@ -31,33 +31,18 @@ class HostGroupControllerShould {
   @MockBean
   private lateinit var hostGroupService: HostGroupService
 
+  private val validHostGroupMatcherDto = HostGroupMatcherDto(
+    tagName = "production_servers",
+    tagValues = listOf("production", "beanstalk")
+  )
   private val validHostGroupDto = CreateHostGroupDto(
     tenantId = 1L,
     name = "production",
     matchers = listOf(
-      HostGroupMatcherDto(
-        "production_servers",
-        listOf("production", "beanstalk")
-      )
-    )
-  )
-
-  private val blankNameCreateHostGroupDto = validHostGroupDto.copy(name = "")
-  private val negativeTenantIdCreateHostGroupDto = validHostGroupDto.copy(tenantId = -1L)
-  private val emptyMatchersCreateHostGroupDto = validHostGroupDto.copy(matchers = listOf())
-  private val emptyMatcherTagNameCreateHostGroupDto = validHostGroupDto.copy(
-    matchers = listOf(
-      HostGroupMatcherDto(
-        "",
-        listOf("production", "beanstalk")
-      )
-    )
-  )
-  private val emptyMatcherTagValuesCreateHostGroupDto = validHostGroupDto.copy(
-    matchers = listOf(
-      HostGroupMatcherDto(
-        "production_servers",
-        listOf()
+      validHostGroupMatcherDto,
+      validHostGroupMatcherDto.copy(
+        tagName = "development_servers",
+        tagValues = listOf("development", "beanstalk")
       )
     )
   )
@@ -113,11 +98,22 @@ class HostGroupControllerShould {
 
   @TestFactory
   fun `return 400 when the payload is invalid`() = listOf(
-    Pair("blank host group name", objToJsonStr(blankNameCreateHostGroupDto)),
-    Pair("negative tenant id", objToJsonStr(negativeTenantIdCreateHostGroupDto)),
-    Pair("empty matchers", objToJsonStr(emptyMatchersCreateHostGroupDto)),
-    Pair("empty matcher tag name", objToJsonStr(emptyMatcherTagNameCreateHostGroupDto)),
-    Pair("empty matcher tag value", objToJsonStr(emptyMatcherTagValuesCreateHostGroupDto)),
+    Pair("negative tenant id", objToJsonStr(validHostGroupDto.copy(tenantId = -1L))),
+    Pair("null tenant id", objToJsonStr(validHostGroupDto.copy(tenantId = null))),
+    Pair("blank host group name", objToJsonStr(validHostGroupDto.copy(name = ""))),
+    Pair("null host group name", objToJsonStr(validHostGroupDto.copy(name = null))),
+    Pair("empty matchers", objToJsonStr(validHostGroupDto.copy(matchers = listOf()))),
+    Pair("null matchers", objToJsonStr(validHostGroupDto.copy(matchers = null))),
+    Pair(
+      "empty matcher tag name", objToJsonStr(
+        validHostGroupDto.copy(matchers = listOf(validHostGroupMatcherDto.copy(tagName = "")))
+      )
+    ),
+    Pair(
+      "null matcher tag name", objToJsonStr(
+        validHostGroupDto.copy(matchers = listOf(validHostGroupMatcherDto.copy(tagName = null)))
+      )
+    ),
     Pair("empty request body", ""),
   ).map { (testName: String, createHostGroupDtoStr: String) ->
     DynamicTest.dynamicTest(testName) {
