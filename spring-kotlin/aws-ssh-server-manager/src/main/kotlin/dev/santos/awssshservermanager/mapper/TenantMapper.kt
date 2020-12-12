@@ -1,11 +1,9 @@
 package dev.santos.awssshservermanager.mapper
 
-import dev.santos.awssshservermanager.dto.CreateTenantDto
+import dev.santos.awssshservermanager.dto.CreateTenantRequest
 import dev.santos.awssshservermanager.model.Tenant
 import org.mapstruct.InjectionStrategy
 import org.mapstruct.Mapper
-import org.mapstruct.Mapping
-import org.mapstruct.Mappings
 import org.mapstruct.ReportingPolicy
 
 @Mapper(
@@ -14,10 +12,5 @@ import org.mapstruct.ReportingPolicy
   unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 interface TenantMapper {
-  @Mappings(
-    Mapping(source = "name", target = "name"),
-    Mapping(source = "awsApiKey", target = "awsApiKey"),
-    Mapping(source = "awsApiSecret", target = "awsApiSecret")
-  )
-  fun toTenant(createTenantDto: CreateTenantDto): Tenant
+  fun toTenant(createTenantRequest: CreateTenantRequest): Tenant
 }

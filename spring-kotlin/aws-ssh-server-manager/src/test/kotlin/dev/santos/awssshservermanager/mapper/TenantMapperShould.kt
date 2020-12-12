@@ -1,6 +1,6 @@
 package dev.santos.awssshservermanager.mapper
 
-import dev.santos.awssshservermanager.dto.CreateTenantDto
+import dev.santos.awssshservermanager.dto.CreateTenantRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
@@ -16,30 +16,31 @@ class TenantMapperShould {
   lateinit var tenantMapper: TenantMapper
 
   @TestFactory
-  fun `map to Tenant valid CreateTenantDto`() = listOf(
+  fun `map to Tenant valid CreateTenantRequest`() = listOf(
     Pair(
-      "create tenant dto with all fields",
-      CreateTenantDto(
+      "create tenant request with all fields",
+      CreateTenantRequest(
         name = "some-company",
         awsApiKey = "super_secret_key",
         awsApiSecret = "super_secret_secret"
       )
     ),
     Pair(
-      "create tenant dto with name and key",
-      CreateTenantDto(
+      "create tenant request with name and key",
+      CreateTenantRequest(
         name = "some-company",
-        awsApiKey = "super_secret_key"
+        awsApiKey = "super_secret_key",
+        awsApiSecret = "",
       )
     ),
-  ).map { (testName: String, createTenantDto: CreateTenantDto) ->
+  ).map { (testName: String, createTenantRequest: CreateTenantRequest) ->
     DynamicTest.dynamicTest(testName) {
-      val mappedTenant = tenantMapper.toTenant(createTenantDto)
+      val mappedTenant = tenantMapper.toTenant(createTenantRequest)
 
       assertThat(mappedTenant).isNotNull
-      assertThat(mappedTenant.name).isEqualTo(createTenantDto.name)
-      assertThat(mappedTenant.awsApiKey).isEqualTo(createTenantDto.awsApiKey)
-      assertThat(mappedTenant.awsApiSecret).isEqualTo(createTenantDto.awsApiSecret)
+      assertThat(mappedTenant.name).isEqualTo(createTenantRequest.name)
+      assertThat(mappedTenant.awsApiKey).isEqualTo(createTenantRequest.awsApiKey)
+      assertThat(mappedTenant.awsApiSecret).isEqualTo(createTenantRequest.awsApiSecret)
     }
   }
 }
