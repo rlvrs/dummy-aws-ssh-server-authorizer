@@ -1,6 +1,6 @@
 package dev.santos.awssshservermanager.service
 
-import dev.santos.awssshservermanager.dto.CreateTenantDto
+import dev.santos.awssshservermanager.dto.CreateTenantRequest
 import dev.santos.awssshservermanager.exception.DuplicateTenantException
 import dev.santos.awssshservermanager.exception.TenantNotFoundException
 import dev.santos.awssshservermanager.mapper.TenantMapper
@@ -15,19 +15,15 @@ class TenantService(
   val tenantRepository: TenantRepository,
   val tenantMapper: TenantMapper
 ) {
-  fun create(createTenantDto: CreateTenantDto): Long {
+  @Throws(DuplicateTenantException::class)
+  fun create(createTenantRequest: CreateTenantRequest): Long {
     try {
-      val newTenant = tenantMapper.toTenant(createTenantDto)
+      val newTenant = tenantMapper.toTenant(createTenantRequest)
       return tenantRepository
         .save(newTenant)
         .id
-    } catch (exception: Exception) {
-      when (exception) {
-        is DataIntegrityViolationException -> {
-          throw DuplicateTenantException(exception.message.orEmpty())
-        }
-        else -> throw exception
-      }
+    } catch (exception: DataIntegrityViolationException) {
+      throw DuplicateTenantException(exception.message.orEmpty())
     }
   }
 

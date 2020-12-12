@@ -1,8 +1,8 @@
 package dev.santos.awssshservermanager.service
 
-import dev.santos.awssshservermanager.dto.CreateTenantDto
+import dev.santos.awssshservermanager.dto.CreateTenantRequest
 import dev.santos.awssshservermanager.exception.DuplicateTenantException
-import dev.santos.awssshservermanager.mapper.TenantMapper
+import dev.santos.awssshservermanager.mapper.TenantMapperImpl
 import dev.santos.awssshservermanager.model.Tenant
 import dev.santos.awssshservermanager.repository.TenantRepository
 import org.junit.jupiter.api.Assertions
@@ -13,25 +13,28 @@ import org.mockito.BDDMockito.given
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.doThrow
+import org.mockito.Spy
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
+@Import(TenantMapperImpl::class)
 class TenantServiceShould {
   @Mock
   private lateinit var tenantRepository: TenantRepository
 
-  @Mock
-  private lateinit var tenantMapper: TenantMapper
+  @Spy
+  private lateinit var tenantMapper: TenantMapperImpl
 
   @InjectMocks
   private lateinit var tenantService: TenantService
 
   @Test
   fun `create a tenant successfully`() {
-    val inputDto = CreateTenantDto(
+    val inputCreateTenantRequest = CreateTenantRequest(
       name = "some-company",
       awsApiKey = "super_secret_key",
       awsApiSecret = "super_secret_secret"
@@ -43,15 +46,13 @@ class TenantServiceShould {
 
     given(tenantRepository.save(any(Tenant::class.java)))
       .willReturn(expectedTenant)
-    given(tenantMapper.toTenant(inputDto))
-      .willReturn(expectedTenant)
 
-    Assertions.assertEquals(tenantService.create(inputDto), expectedId)
+    Assertions.assertEquals(tenantService.create(inputCreateTenantRequest), expectedId)
   }
 
   @Test
   fun `throw an exception when the tenant exists in the DB`() {
-    val inputDto = CreateTenantDto(
+    val inputCreateTenantRequest = CreateTenantRequest(
       name = "some-company",
       awsApiKey = "super_secret_key",
       awsApiSecret = "super_secret_secret"
@@ -61,7 +62,7 @@ class TenantServiceShould {
       .`when`(tenantRepository).save(any())
 
     Assertions.assertThrows(DuplicateTenantException::class.java) {
-      tenantService.create(inputDto)
+      tenantService.create(inputCreateTenantRequest)
     }
   }
 }
