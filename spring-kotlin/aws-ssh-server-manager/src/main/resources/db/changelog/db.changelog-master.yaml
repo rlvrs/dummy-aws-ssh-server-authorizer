@@ -5,3 +5,5 @@ databaseChangeLog:
       path: db/changelog/changes/user
   - includeAll:
       path: db/changelog/changes/hostgroup
+  - includeAll:
+      path: db/changelog/changes/permission

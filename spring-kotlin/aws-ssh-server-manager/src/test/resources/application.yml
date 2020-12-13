@@ -13,4 +13,5 @@ aws:
   iam:
     region: eu-west-1
     endpointUri: http://localhost:4566
-    path: /test/dev/prefix
+    policy:
+      path: /test/dev/prefix

@@ -2,36 +2,24 @@ package dev.santos.awssshservermanager.lib.aws.iam
 
 import dev.santos.awssshservermanager.lib.aws.config.AwsIamConfig
 import dev.santos.awssshservermanager.lib.aws.exception.DuplicatePolicyException
+import dev.santos.awssshservermanager.lib.aws.exception.PolicyAttachmentParamNotFoundException
 import dev.santos.awssshservermanager.lib.aws.exception.PolicyNotFoundException
+import dev.santos.awssshservermanager.lib.aws.model.IamAttachedPolicy
 import dev.santos.awssshservermanager.lib.aws.model.IamPolicy
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.AwsCredentials
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
-import software.amazon.awssdk.services.iam.IamClient
+import software.amazon.awssdk.services.iam.model.AttachUserPolicyRequest
 import software.amazon.awssdk.services.iam.model.CreatePolicyRequest
 import software.amazon.awssdk.services.iam.model.GetPolicyVersionRequest
 import software.amazon.awssdk.services.iam.model.IamException
+import software.amazon.awssdk.services.iam.model.ListAttachedUserPoliciesRequest
 
 @Component
-class PolicyManager(@Autowired private val awsIamConfig: AwsIamConfig) {
-
-  fun buildClient(awsCredentials: AwsCredentials): IamClient {
-    val builder = IamClient
-      .builder()
-      .region(awsIamConfig.region)
-      .credentialsProvider(
-        StaticCredentialsProvider.create(
-          AwsBasicCredentials.create(awsCredentials.accessKeyId(), awsCredentials.secretAccessKey())
-        )
-      )
-    return when (awsIamConfig.endpointUri) {
-      null -> builder
-      else -> builder.endpointOverride(awsIamConfig.endpointUri)
-    }.build()
-  }
-
+class PolicyManager(
+  @Autowired val awsIamConfig: AwsIamConfig,
+  @Autowired val iamClientBuilder: IamClientBuilder
+) {
   fun create(awsCredentials: AwsCredentials, name: String, document: String): IamPolicy {
     val request = CreatePolicyRequest
       .builder()
@@ -41,7 +29,7 @@ class PolicyManager(@Autowired private val awsIamConfig: AwsIamConfig) {
       .build()
 
     try {
-      val response = buildClient(awsCredentials).createPolicy(request)
+      val response = iamClientBuilder.buildClient(awsCredentials).createPolicy(request)
       return IamPolicy(
         document = document,
         versionId = response.policy().defaultVersionId(),
@@ -63,7 +51,7 @@ class PolicyManager(@Autowired private val awsIamConfig: AwsIamConfig) {
       .build()
 
     try {
-      val response = buildClient(awsCredentials).getPolicyVersion(request)
+      val response = iamClientBuilder.buildClient(awsCredentials).getPolicyVersion(request)
       return IamPolicy(
         document = response.policyVersion().document(),
         versionId = versionId,
@@ -72,6 +60,43 @@ class PolicyManager(@Autowired private val awsIamConfig: AwsIamConfig) {
     } catch (e: IamException) {
       when (e.statusCode()) {
         404 -> throw PolicyNotFoundException(e.message.orEmpty())
+        else -> throw e
+      }
+    }
+  }
+
+  fun attachUserPolicy(awsCredentials: AwsCredentials, arn: String, userName: String) {
+    val request = AttachUserPolicyRequest
+      .builder()
+      .policyArn(arn)
+      .userName(userName)
+      .build()
+
+    try {
+      iamClientBuilder.buildClient(awsCredentials).attachUserPolicy(request)
+    } catch (e: IamException) {
+      when (e.statusCode()) {
+        404 -> throw PolicyAttachmentParamNotFoundException(e.message.orEmpty())
+        else -> throw e
+      }
+    }
+  }
+
+  fun listAttachedUserPolicies(awsCredentials: AwsCredentials, userName: String): List<IamAttachedPolicy> {
+    val request = ListAttachedUserPoliciesRequest
+      .builder()
+      .pathPrefix(awsIamConfig.path)
+      .userName(userName)
+      .build()
+
+    try {
+      return iamClientBuilder.buildClient(awsCredentials)
+        .listAttachedUserPolicies(request)
+        .attachedPolicies()
+        .map { IamAttachedPolicy(arn = it.policyArn(), name = it.policyName()) }
+    } catch (e: IamException) {
+      when (e.statusCode()) {
+        404 -> throw PolicyAttachmentParamNotFoundException(e.message.orEmpty())
         else -> throw e
       }
     }

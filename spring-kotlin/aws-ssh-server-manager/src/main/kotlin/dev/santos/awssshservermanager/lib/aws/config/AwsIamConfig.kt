@@ -20,7 +20,7 @@ class AwsIamConfiguration {
   @Value("\${aws.iam.endpointUri}")
   private val endpointUriStr: String? = null
 
-  @Value("\${aws.iam.path}")
+  @Value("\${aws.iam.policy.path}")
   val path: String? = null
 
   @Bean

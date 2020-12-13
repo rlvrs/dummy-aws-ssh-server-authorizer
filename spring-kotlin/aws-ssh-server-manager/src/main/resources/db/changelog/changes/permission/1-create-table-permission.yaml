@@ -1,0 +1,94 @@
+databaseChangeLog:
+  - changeSet:
+      id: permission1-create-table-permission
+      author: rlvrs
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: permission
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_permission_id
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_tenant_id
+                    references: tenant(id)
+              - column:
+                  name: grantor_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_grantor_id
+                    references: users(id)
+              - column:
+                  name: host_group_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_host_group_id
+                    references: host_group(id)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: grantee
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: grantee_type
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_ts
+                  type: TIMESTAMP
+                  defaultValueComputed: timezone('utc', now())
+              - column:
+                  constraints:
+                    nullable: false
+                  name: expiration_time_minutes
+                  type: BIGINT
+            tableName: permission
+
+  - changeSet:
+      id: permission1-positive-expiration-time-minutes
+      author: rlvrs
+      changes:
+        - sql:
+            comment: Check that expiration_time_minutes is positive
+            endDelimiter: \nGO
+            splitStatements: true
+            sql: ALTER TABLE public.permission ADD CONSTRAINT positive_expiration_time_minutes CHECK (expiration_time_minutes > 0);
+            stripComments: true
+
+  - changeSet:
+      id: permission1-grantee-type-value-check
+      author: rlvrs
+      changes:
+        - sql:
+            comment: Check grantee_type enum values
+            endDelimiter: \nGO
+            splitStatements: true
+            sql: ALTER TABLE public.permission ADD CONSTRAINT grantee_type_value CHECK (grantee_type = 'USER' OR grantee_type = 'GROUP');
+            stripComments: true
+
+  - changeSet:
+      id: permission1-unique-tenant-grantee-hostgroup-constraint
+      author: rlvrs
+      changes:
+        - addUniqueConstraint:
+            columnNames: tenant_id, grantee, grantee_type, host_group_id
+            constraintName: unique_tenantid_grantee_hostgroup
+            tableName: permission
