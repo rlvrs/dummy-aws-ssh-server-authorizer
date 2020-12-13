@@ -1,6 +1,27 @@
 version: "3.8"
 
+x-aws-common-envs: &aws-common-envs
+  AWS_ACCESS_KEY_ID: "0"
+  AWS_SECRET_ACCESS_KEY: "0"
+
 services:
+
+  localstack:
+    image: localstack/localstack:0.12.2
+    ports:
+      - "4566:4566"
+      - "${PORT_WEB_UI-8090}:${PORT_WEB_UI-8090}"
+    environment:
+      << : *aws-common-envs
+      DEFAULT_REGION: "eu-west-1"
+      EDGE_PORT: "4566"
+      SERVICES: "iam"
+      HOSTNAME: "localstack"
+      DATA_DIR: "/tmp/localstack/data"
+      DEBUG: "1"
+      DOCKER_HOST: "unix:///var/run/docker.sock"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
 
   db:
     image: postgres:13.0-alpine

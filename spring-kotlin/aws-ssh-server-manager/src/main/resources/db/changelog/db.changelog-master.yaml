@@ -3,3 +3,5 @@ databaseChangeLog:
       path: db/changelog/changes/tenant
   - includeAll:
       path: db/changelog/changes/user
+  - includeAll:
+      path: db/changelog/changes/hostgroup
