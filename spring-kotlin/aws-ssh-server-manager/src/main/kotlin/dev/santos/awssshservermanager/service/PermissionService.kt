@@ -1,5 +1,6 @@
 package dev.santos.awssshservermanager.service
 
+import dev.santos.awssshservermanager.adapter.persistence.PermissionRepository
 import dev.santos.awssshservermanager.dto.CreatePermissionDto
 import dev.santos.awssshservermanager.exception.DuplicatePermissionException
 import dev.santos.awssshservermanager.exception.PermissionGrantorNotFoundException
@@ -8,7 +9,6 @@ import dev.santos.awssshservermanager.exception.PermissionTenantNotFoundExceptio
 import dev.santos.awssshservermanager.lib.aws.iam.PolicyManager
 import dev.santos.awssshservermanager.mapper.PermissionMapper
 import dev.santos.awssshservermanager.model.Permission
-import dev.santos.awssshservermanager.repository.PermissionRepository
 import org.hibernate.exception.ConstraintViolationException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service

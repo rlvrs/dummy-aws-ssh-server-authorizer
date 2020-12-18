@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component
 import software.amazon.awssdk.auth.credentials.AwsCredentials
 import software.amazon.awssdk.services.iam.model.AttachUserPolicyRequest
 import software.amazon.awssdk.services.iam.model.CreatePolicyRequest
+import software.amazon.awssdk.services.iam.model.DeletePolicyRequest
+import software.amazon.awssdk.services.iam.model.DetachUserPolicyRequest
 import software.amazon.awssdk.services.iam.model.GetPolicyVersionRequest
 import software.amazon.awssdk.services.iam.model.IamException
 import software.amazon.awssdk.services.iam.model.ListAttachedUserPoliciesRequest
@@ -38,6 +40,22 @@ class PolicyManager(
     } catch (e: IamException) {
       when (e.statusCode()) {
         409 -> throw DuplicatePolicyException(e.message.orEmpty())
+        else -> throw e
+      }
+    }
+  }
+
+  fun remove(awsCredentials: AwsCredentials, arn: String) {
+    try {
+      val request = DeletePolicyRequest
+        .builder()
+        .policyArn(arn)
+        .build()
+
+      iamClientBuilder.buildClient(awsCredentials).deletePolicy(request)
+    } catch (e: IamException) {
+      when (e.statusCode()) {
+        404 -> throw PolicyNotFoundException(e.message.orEmpty())
         else -> throw e
       }
     }
@@ -77,6 +95,24 @@ class PolicyManager(
     } catch (e: IamException) {
       when (e.statusCode()) {
         404 -> throw PolicyAttachmentParamNotFoundException(e.message.orEmpty())
+        else -> throw e
+      }
+    }
+  }
+
+  @Throws(PolicyNotFoundException::class, IamException::class)
+  fun detachUserPolicy(awsCredentials: AwsCredentials, arn: String, userName: String) {
+    val request = DetachUserPolicyRequest
+      .builder()
+      .policyArn(arn)
+      .userName(userName)
+      .build()
+
+    try {
+      iamClientBuilder.buildClient(awsCredentials).detachUserPolicy(request)
+    } catch (e: IamException) {
+      when (e.statusCode()) {
+        404 -> throw PolicyNotFoundException(e.message.orEmpty())
         else -> throw e
       }
     }

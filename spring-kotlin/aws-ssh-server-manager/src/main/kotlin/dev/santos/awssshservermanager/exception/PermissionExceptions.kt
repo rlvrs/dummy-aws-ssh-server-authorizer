@@ -14,3 +14,6 @@ class PermissionGrantorNotFoundException(override val message: String) : Runtime
 
 @ResponseStatus(code = HttpStatus.NOT_FOUND)
 class PermissionHostGroupNotFoundException(override val message: String) : RuntimeException()
+
+@ResponseStatus(code = HttpStatus.NOT_FOUND)
+class PermissionNotFoundException(override val message: String) : RuntimeException()

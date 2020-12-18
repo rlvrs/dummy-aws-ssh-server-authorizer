@@ -1,15 +1,15 @@
 package dev.santos.awssshservermanager.service
 
+import dev.santos.awssshservermanager.adapter.persistence.PermissionRepository
 import dev.santos.awssshservermanager.dto.CreatePermissionDto
 import dev.santos.awssshservermanager.exception.DuplicatePermissionException
 import dev.santos.awssshservermanager.exception.PermissionGrantorNotFoundException
 import dev.santos.awssshservermanager.exception.PermissionHostGroupNotFoundException
 import dev.santos.awssshservermanager.exception.PermissionTenantNotFoundException
 import dev.santos.awssshservermanager.lib.aws.iam.PolicyManager
-import dev.santos.awssshservermanager.mapper.PermissionMapper
+import dev.santos.awssshservermanager.mapper.PermissionMapperImpl
 import dev.santos.awssshservermanager.model.HostGroup
 import dev.santos.awssshservermanager.model.Permission
-import dev.santos.awssshservermanager.repository.PermissionRepository
 import org.hibernate.exception.ConstraintViolationException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
@@ -22,10 +22,10 @@ import org.mockito.BDDMockito.given
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.doThrow
+import org.mockito.Spy
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import java.sql.SQLException
 import java.util.concurrent.TimeUnit
 
@@ -44,14 +44,13 @@ class PermissionServiceShould {
   @Mock
   private lateinit var permissionRepository: PermissionRepository
 
-  @Mock
-  private lateinit var permissionMapper: PermissionMapper
+  @Spy
+  private lateinit var permissionMapper: PermissionMapperImpl
 
   @InjectMocks
   private lateinit var permissionService: PermissionService
 
-  private val awsCredentials: AwsBasicCredentials = AwsBasicCredentials.create("0", "0")
-  private val validPermissionDto = CreatePermissionDto(
+  private val validCreatePermissionDto = CreatePermissionDto(
     tenantId = 1L,
     grantorId = 1L,
     hostGroupId = 1L,
@@ -59,6 +58,7 @@ class PermissionServiceShould {
     granteeType = "USER",
     expirationTimeMinutes = TimeUnit.MINUTES.toMillis(10L)
   )
+
   val expectedPermission = Permission(
     id = 2L,
     tenantId = 1L
@@ -70,10 +70,8 @@ class PermissionServiceShould {
       .willReturn(HostGroup(matchers = listOf()))
     given(permissionRepository.save(any(Permission::class.java)))
       .willReturn(expectedPermission)
-    given(permissionMapper.toPermission(validPermissionDto))
-      .willReturn(expectedPermission)
 
-    Assertions.assertEquals(permissionService.create(validPermissionDto), 2L)
+    Assertions.assertEquals(permissionService.create(validCreatePermissionDto), 2L)
   }
 
   data class DbConstraintViolationInput<T>(
@@ -125,13 +123,11 @@ class PermissionServiceShould {
         )
       ).`when`(permissionRepository).save(any())
 
-      given(permissionMapper.toPermission(validPermissionDto))
-        .willReturn(expectedPermission)
       given(hostGroupService.getHostGroupById(anyLong()))
         .willReturn(HostGroup(matchers = listOf()))
 
       Assertions.assertThrows(input.exceptionClass) {
-        permissionService.create(validPermissionDto)
+        permissionService.create(validCreatePermissionDto)
       }
     }
   }
