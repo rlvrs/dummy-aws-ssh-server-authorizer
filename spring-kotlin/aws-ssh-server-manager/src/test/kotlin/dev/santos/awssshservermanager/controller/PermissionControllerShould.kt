@@ -32,7 +32,7 @@ class PermissionControllerShould {
   @MockBean
   private lateinit var permissionService: PermissionService
 
-  private val validPermissionDto = CreatePermissionDto(
+  private val validCreatePermissionDto = CreatePermissionDto(
     tenantId = 1L,
     grantorId = 1L,
     hostGroupId = 1L,
@@ -43,12 +43,12 @@ class PermissionControllerShould {
 
   @Test
   fun `return HTTP 201 when the permission is created`() {
-    BDDMockito.given(this.permissionService.create(validPermissionDto))
+    BDDMockito.given(this.permissionService.create(validCreatePermissionDto))
       .willReturn(2)
 
     mockMvc.post("/permission") {
       contentType = MediaType.APPLICATION_JSON
-      content = Gson().toJson(validPermissionDto)
+      content = Gson().toJson(validCreatePermissionDto)
       accept = MediaType.APPLICATION_JSON
     }.andExpect {
       status { isCreated() }
@@ -60,14 +60,14 @@ class PermissionControllerShould {
 
   @Test
   fun `return 409 when the permission exists`() {
-    BDDMockito.given(this.permissionService.create(validPermissionDto))
+    BDDMockito.given(this.permissionService.create(validCreatePermissionDto))
       .willAnswer {
         throw DuplicatePermissionException("Permission Id -1 already exists!")
       }
 
     mockMvc.post("/permission") {
       contentType = MediaType.APPLICATION_JSON
-      content = Gson().toJson(validPermissionDto)
+      content = Gson().toJson(validCreatePermissionDto)
       accept = MediaType.APPLICATION_JSON
     }.andExpect {
       status { isConflict() }
@@ -76,14 +76,14 @@ class PermissionControllerShould {
 
   @Test
   fun `return 404 when the permission tenant does not exist`() {
-    BDDMockito.given(this.permissionService.create(validPermissionDto))
+    BDDMockito.given(this.permissionService.create(validCreatePermissionDto))
       .willAnswer {
         throw PermissionTenantNotFoundException("Tenant Id -1 does not exist.")
       }
 
     mockMvc.post("/permission") {
       contentType = MediaType.APPLICATION_JSON
-      content = Gson().toJson(validPermissionDto)
+      content = Gson().toJson(validCreatePermissionDto)
       accept = MediaType.APPLICATION_JSON
     }.andExpect {
       status { isNotFound() }
@@ -91,40 +91,40 @@ class PermissionControllerShould {
   }
 
   @TestFactory
-  fun `return 400 when the payload is invalid`() = listOf(
-    Pair("zero tenant id", objToJsonStr(validPermissionDto.copy(tenantId = 0L))),
-    Pair("negative grantor id", objToJsonStr(validPermissionDto.copy(grantorId = -1L))),
-    Pair("negative host group id", objToJsonStr(validPermissionDto.copy(hostGroupId = -2L))),
-    Pair("blank grantee", objToJsonStr(validPermissionDto.copy(grantee = ""))),
-    Pair("zero expiration time in minutes", objToJsonStr(validPermissionDto.copy(expirationTimeMinutes = 0L))),
+  fun `return 400 when the create permission dto is invalid`() = listOf(
+    Pair("zero tenant id", objToJsonStr(validCreatePermissionDto.copy(tenantId = 0L))),
+    Pair("negative grantor id", objToJsonStr(validCreatePermissionDto.copy(grantorId = -1L))),
+    Pair("negative host group id", objToJsonStr(validCreatePermissionDto.copy(hostGroupId = -2L))),
+    Pair("blank grantee", objToJsonStr(validCreatePermissionDto.copy(grantee = ""))),
+    Pair("zero expiration time in minutes", objToJsonStr(validCreatePermissionDto.copy(expirationTimeMinutes = 0L))),
     Pair("empty request body", ""),
     Pair(
       "null tenantId",
-      objToJsonStr(validPermissionDto.copy(tenantId = null))
+      objToJsonStr(validCreatePermissionDto.copy(tenantId = null))
     ),
     Pair(
       "null grantor id",
-      objToJsonStr(validPermissionDto.copy(grantorId = null))
+      objToJsonStr(validCreatePermissionDto.copy(grantorId = null))
     ),
     Pair(
       "null host group id",
-      objToJsonStr(validPermissionDto.copy(hostGroupId = null))
+      objToJsonStr(validCreatePermissionDto.copy(hostGroupId = null))
     ),
     Pair(
       "null grantee",
-      objToJsonStr(validPermissionDto.copy(grantee = null))
+      objToJsonStr(validCreatePermissionDto.copy(grantee = null))
     ),
     Pair(
       "null grantee type",
-      objToJsonStr(validPermissionDto.copy(granteeType = null))
+      objToJsonStr(validCreatePermissionDto.copy(granteeType = null))
     ),
     Pair(
       "null expiration time minutes",
-      objToJsonStr(validPermissionDto.copy(expirationTimeMinutes = null))
+      objToJsonStr(validCreatePermissionDto.copy(expirationTimeMinutes = null))
     ),
     Pair(
       "invalid grantee type",
-      objToJsonStr(validPermissionDto.copy(granteeType = "SYSADMIN"))
+      objToJsonStr(validCreatePermissionDto.copy(granteeType = "SYSADMIN"))
     ),
   ).map { (testName: String, createPermissionDtoStr: String) ->
     DynamicTest.dynamicTest(testName) {

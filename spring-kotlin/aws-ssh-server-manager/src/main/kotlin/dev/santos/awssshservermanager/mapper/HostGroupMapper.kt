@@ -22,5 +22,7 @@ interface HostGroupMapper {
   )
   fun toHostGroup(createHostGroupDto: CreateHostGroupDto, iamPolicy: IamPolicy): HostGroup
 
+  fun toCreateHostGroupDto(hostGroup: HostGroup): CreateHostGroupDto
+
   fun toCreateHostGroupPolicyDto(createHostGroupDto: CreateHostGroupDto): CreateHostGroupPolicyDto
 }

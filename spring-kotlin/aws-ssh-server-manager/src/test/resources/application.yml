@@ -2,7 +2,6 @@ spring:
   liquibase:
     enabled: false
 
-
 logging:
   level:
     org.springframework.web: DEBUG

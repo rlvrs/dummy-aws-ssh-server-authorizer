@@ -1,0 +1,21 @@
+spring:
+  liquibase:
+    enabled: true
+
+  data:
+    rest:
+      basePath: /api/v1
+
+
+aws:
+  iam:
+    region: eu-west-1
+    endpointUri: http://localhost:4566
+    policy:
+      path: /dev
+
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG

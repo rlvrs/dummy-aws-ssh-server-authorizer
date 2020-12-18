@@ -60,7 +60,8 @@ class TenantControllerShould {
       awsApiKey = "super_secret_key",
       awsApiSecret = "super_secret_secret"
     )
-    BDDMockito.willThrow(DuplicateTenantException("Tenant -1 already exists!"))
+    BDDMockito
+      .willThrow(DuplicateTenantException("Tenant -1 already exists!"))
       .given(this.tenantService).create(testTenantRequest)
 
     mockMvc.post("/tenant") {

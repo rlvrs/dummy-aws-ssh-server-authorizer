@@ -1,49 +1,51 @@
 package dev.santos.awssshservermanager.lib.aws.iam
 
-import cloud.localstack.docker.LocalstackDockerExtension
-import cloud.localstack.docker.annotation.LocalstackDockerProperties
+import dev.santos.awssshservermanager.IntegrationTestBase
 import dev.santos.awssshservermanager.helper.ResourceHelper
-import dev.santos.awssshservermanager.helper.lib.aws.iam.AwsUserManager
 import dev.santos.awssshservermanager.lib.aws.exception.DuplicatePolicyException
 import dev.santos.awssshservermanager.lib.aws.exception.PolicyAttachmentParamNotFoundException
 import dev.santos.awssshservermanager.lib.aws.exception.PolicyNotFoundException
 import dev.santos.awssshservermanager.lib.aws.model.IamAttachedPolicy
+import dev.santos.awssshservermanager.lib.aws.model.IamPolicy
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
-import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.junit.jupiter.api.TestInstance
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 
-@SpringBootTest
-@ExtendWith(SpringExtension::class, LocalstackDockerExtension::class)
-@LocalstackDockerProperties(
-  services = ["iam"],
-  pullNewImage = false,
-  imageTag = "0.12.2",
-  useSingleDockerContainer = false
-)
-@Import(AwsUserManager::class)
-class PolicyManagerShould {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class PolicyManagerShould : IntegrationTestBase() {
   init {
     System.setProperty("aws.accessKeyId", "0")
     System.setProperty("aws.secretAccessKey", "0")
   }
 
-  @Autowired
-  private lateinit var iamClientBuilder: IamClientBuilder
-
-  @Autowired
-  private lateinit var policyManager: PolicyManager
-
-  @Autowired
-  private lateinit var awsUserManager: AwsUserManager
-
   val awsCredentials: AwsBasicCredentials = AwsBasicCredentials.create("0", "0")
   val policySsmTagsJsonStr: String = ResourceHelper.readAsString("/lib/aws/iam/policySsmTags.json")
+
+  val testPolicyName = "test_policy_name"
+  var validPolicy = IamPolicy("", "", "")
+
+  @BeforeEach
+  internal fun setup() {
+    validPolicy = policyManager.create(
+      awsCredentials,
+      name = testPolicyName,
+      document = policySsmTagsJsonStr
+    )
+  }
+
+  @AfterEach
+  internal fun tearDown() {
+    policyManager.listAttachedUserPolicies(awsCredentials, tenantUserName)
+      .forEach { policyManager.detachUserPolicy(awsCredentials, it.arn, tenantUserName) }
+    policyManager.remove(
+      awsCredentials,
+      arn = validPolicy.arn
+    )
+  }
 
   @Test
   fun `create a new policy`() {
@@ -58,15 +60,10 @@ class PolicyManagerShould {
 
   @Test
   fun `throw an exception if policy already exists`() {
-    policyManager.create(
-      awsCredentials,
-      name = "duplicateName",
-      document = policySsmTagsJsonStr
-    )
     Assertions.assertThrows(DuplicatePolicyException::class.java) {
       policyManager.create(
         awsCredentials,
-        name = "duplicateName",
+        name = testPolicyName,
         document = policySsmTagsJsonStr
       )
     }
@@ -85,21 +82,13 @@ class PolicyManagerShould {
 
   @Test
   fun `attach an new policy`() {
-    val testUser = "test.user"
-    val testPolicyName = "attach_new_policy_test"
-    awsUserManager.create(awsCredentials, testUser)
-    val createResp = policyManager.create(
-      awsCredentials,
-      name = testPolicyName,
-      document = policySsmTagsJsonStr
-    )
     policyManager.attachUserPolicy(
       awsCredentials,
-      arn = createResp.arn,
-      userName = testUser
+      arn = validPolicy.arn,
+      userName = tenantUserName
     )
-    assertThat(policyManager.listAttachedUserPolicies(awsCredentials, testUser))
-      .contains(IamAttachedPolicy(testPolicyName, createResp.arn))
+    assertThat(policyManager.listAttachedUserPolicies(awsCredentials, tenantUserName))
+      .contains(IamAttachedPolicy(testPolicyName, validPolicy.arn))
   }
 
   @Test
@@ -121,5 +110,28 @@ class PolicyManagerShould {
         userName = "invalid_username"
       )
     }
+  }
+
+  @Test
+  fun `detach an new policy`() {
+    policyManager.attachUserPolicy(
+      awsCredentials,
+      arn = validPolicy.arn,
+      userName = tenantUserName
+    )
+    policyManager.listAttachedUserPolicies(awsCredentials, tenantUserName)
+      .contains(IamAttachedPolicy(testPolicyName, validPolicy.arn))
+    policyManager.detachUserPolicy(
+      awsCredentials,
+      arn = validPolicy.arn,
+      userName = tenantUserName
+    )
+    assertThat(policyManager.listAttachedUserPolicies(awsCredentials, tenantUserName))
+      .doesNotContain(IamAttachedPolicy(testPolicyName, validPolicy.arn))
+    policyManager.attachUserPolicy(
+      awsCredentials,
+      arn = validPolicy.arn,
+      userName = tenantUserName
+    )
   }
 }
