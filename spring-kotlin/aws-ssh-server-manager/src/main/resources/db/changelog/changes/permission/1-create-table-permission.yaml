@@ -70,7 +70,7 @@ databaseChangeLog:
             comment: Check that expiration_time_minutes is positive
             endDelimiter: \nGO
             splitStatements: true
-            sql: ALTER TABLE public.permission ADD CONSTRAINT positive_expiration_time_minutes CHECK (expiration_time_minutes > 0);
+            sql: ALTER TABLE public.permission ADD CONSTRAINT positive_expiration_time_minutes CHECK (expiration_time_minutes >= 0);
             stripComments: true
 
   - changeSet:

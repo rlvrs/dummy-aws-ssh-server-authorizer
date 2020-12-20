@@ -5,6 +5,7 @@ import dev.santos.awssshservermanager.dto.CreatePermissionDto
 import dev.santos.awssshservermanager.helper.objToJsonStr
 import dev.santos.awssshservermanager.mapper.PermissionMapper
 import dev.santos.awssshservermanager.model.Permission
+import org.hamcrest.Matchers
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.data.domain.Example
 import org.springframework.http.MediaType
@@ -27,20 +28,28 @@ class CreatePermissionFixture(
     expirationTimeMinutes = TimeUnit.MINUTES.toMillis(10L)
   )
 
-  fun createPermission() {
-    val permission: Permission = permissionMapper.toPermission(createPermissionDto)
+  private fun createPermission(dto: CreatePermissionDto) {
+    val permission: Permission = permissionMapper.toPermission(dto)
     if (permissionRepository.findOne(Example.of(permission)).isPresent) {
       return
     }
 
     mockMvc.post("/permission") {
       contentType = MediaType.APPLICATION_JSON
-      content = objToJsonStr(createPermissionDto)
+      content = objToJsonStr(dto)
       accept = MediaType.APPLICATION_JSON
     }.andExpect {
       status { isCreated() }
       content { contentType(MediaType.APPLICATION_JSON) }
-      content { json("{\"id\":1}") }
+      content { jsonPath<Int>("$.id", Matchers.greaterThan(0)) }
     }
+  }
+
+  fun createPermission() {
+    createPermission(createPermissionDto)
+  }
+
+  fun createExpiredPermission() {
+    createPermission(createPermissionDto.copy(expirationTimeMinutes = 0L))
   }
 }

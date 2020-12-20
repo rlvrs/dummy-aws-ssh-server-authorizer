@@ -96,7 +96,10 @@ class PermissionControllerShould {
     Pair("negative grantor id", objToJsonStr(validCreatePermissionDto.copy(grantorId = -1L))),
     Pair("negative host group id", objToJsonStr(validCreatePermissionDto.copy(hostGroupId = -2L))),
     Pair("blank grantee", objToJsonStr(validCreatePermissionDto.copy(grantee = ""))),
-    Pair("zero expiration time in minutes", objToJsonStr(validCreatePermissionDto.copy(expirationTimeMinutes = 0L))),
+    Pair(
+      "negative expiration time in minutes",
+      objToJsonStr(validCreatePermissionDto.copy(expirationTimeMinutes = -1L))
+    ),
     Pair("empty request body", ""),
     Pair(
       "null tenantId",

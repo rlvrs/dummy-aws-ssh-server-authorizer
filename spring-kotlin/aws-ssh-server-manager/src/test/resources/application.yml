@@ -1,3 +1,9 @@
+org:
+  jobrunr:
+    background-job-server.enabled=false
+    dashboard.enabled=false
+
+
 spring:
   liquibase:
     enabled: false
