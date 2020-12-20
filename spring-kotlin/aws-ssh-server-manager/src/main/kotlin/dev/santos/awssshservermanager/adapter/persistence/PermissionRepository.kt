@@ -22,4 +22,12 @@ interface PermissionRepository : JpaRepository<Permission, Long> {
     @Param("tenant_id") tenantId: Long,
     @Param("permissionId") permissionId: Long
   )
+
+  @Query(
+    "SELECT * " +
+      "FROM permission " +
+      "WHERE created_ts + expiration_time_minutes * interval '1 minute' < timezone('utc', now())",
+    nativeQuery = true
+  )
+  fun findAllExpired(): List<Permission>
 }

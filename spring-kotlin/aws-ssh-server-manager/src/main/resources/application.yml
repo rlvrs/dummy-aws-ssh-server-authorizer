@@ -2,6 +2,26 @@ server:
   port: 8081
 
 
+org:
+  jobrunr:
+    job-scheduler:
+      enabled: true
+    background-job-server:
+      enabled: true
+      worker_count: 1 # This value normally is defined by the amount of CPU's that are available
+      poll_interval: 15 # Check for new work every 15 seconds
+      delete_succeeded_jobs_after: 72 # Succeeded jobs will go to the deleted state after 72 hours
+      permanently_delete_deleted_jobs_after: 96 # Deleted jobs will be deleted permanently after 96 hours
+    dashboard:
+      enabled: true
+      port: 8000
+
+
+background-job:
+  remove-expired-permissions:
+    cron: "0 * * * *" # Hourly
+
+
 spring:
   liquibase:
     url: jdbc:postgresql://localhost:5432/testdb

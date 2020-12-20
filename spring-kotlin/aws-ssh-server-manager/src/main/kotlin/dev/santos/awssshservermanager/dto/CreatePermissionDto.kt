@@ -4,6 +4,7 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Positive
+import javax.validation.constraints.PositiveOrZero
 
 data class CreatePermissionDto(
   @field:Positive
@@ -23,6 +24,6 @@ data class CreatePermissionDto(
   @field:Pattern(regexp = "USER|GROUP")
   val granteeType: String? = "",
   @field:NotNull
-  @field:Positive
+  @field:PositiveOrZero
   val expirationTimeMinutes: Long?
 )

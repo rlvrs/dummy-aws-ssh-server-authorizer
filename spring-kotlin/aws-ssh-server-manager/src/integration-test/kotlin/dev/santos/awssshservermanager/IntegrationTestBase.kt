@@ -3,6 +3,7 @@ package dev.santos.awssshservermanager
 import cloud.localstack.docker.LocalstackDockerExtension
 import cloud.localstack.docker.annotation.LocalstackDockerProperties
 import dev.santos.awssshservermanager.adapter.persistence.PermissionRepository
+import dev.santos.awssshservermanager.application.port.input.RemoveExpiredPermissionsUseCase
 import dev.santos.awssshservermanager.helper.PgsqlContainer
 import dev.santos.awssshservermanager.helper.lib.aws.iam.AwsAccessKey
 import dev.santos.awssshservermanager.helper.lib.aws.iam.AwsUserManager
@@ -56,6 +57,9 @@ abstract class IntegrationTestBase : PgsqlContainer {
 
   @Autowired
   lateinit var awsUserManager: AwsUserManager
+
+  @Autowired
+  lateinit var removeExpiredPermissionsUseCase: RemoveExpiredPermissionsUseCase
 
   @Autowired
   lateinit var tenantRepository: TenantRepository
