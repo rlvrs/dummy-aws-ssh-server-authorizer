@@ -6,6 +6,12 @@ org:
       enabled: false
 
 
+migration:
+  insert-sysadmin:
+    enabled: false
+    password: ""
+
+
 spring:
   liquibase:
     enabled: true

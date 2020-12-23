@@ -136,7 +136,7 @@ class UserControllerShould : UnitTestBase() {
     ),
     Pair(
       "invalid role",
-      "{\"awsUsername\":\"john.doe\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"password\":\"Str0ngP455!\",\"tenantId\":1,\"role\":\"SYSADMIN\"}"
+      "{\"awsUsername\":\"john.doe\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"password\":\"Str0ngP455!\",\"tenantId\":1,\"role\":\"INVALID_ROLE\"}"
     ),
   ).map { (testName: String, createUserDtoStr: String) ->
     DynamicTest.dynamicTest(testName) {

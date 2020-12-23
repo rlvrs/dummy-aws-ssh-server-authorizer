@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: user2-insert-sysadmin-user
+      author: rlvrs
+      changes:
+        - customChange: {
+          "class": "dev.santos.awssshservermanager.migration.SysadminMigration"
+        }
