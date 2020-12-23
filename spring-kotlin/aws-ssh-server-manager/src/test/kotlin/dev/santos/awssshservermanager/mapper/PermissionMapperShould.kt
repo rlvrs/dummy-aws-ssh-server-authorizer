@@ -1,18 +1,16 @@
 package dev.santos.awssshservermanager.mapper
 
+import UnitTestBase
 import dev.santos.awssshservermanager.dto.CreatePermissionDto
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.util.concurrent.TimeUnit
 
 @SpringBootTest
-@ExtendWith(SpringExtension::class)
-class PermissionMapperShould {
+class PermissionMapperShould : UnitTestBase() {
   @Autowired
   lateinit var permissionMapper: PermissionMapper
 
@@ -45,8 +43,8 @@ class PermissionMapperShould {
 
       assertThat(mappedPermission).isNotNull
       assertThat(mappedPermission.tenantId).isEqualTo(createPermissionDto.tenantId)
-      assertThat(mappedPermission.grantorId).isEqualTo(createPermissionDto.grantorId)
-      assertThat(mappedPermission.hostGroupId).isEqualTo(createPermissionDto.hostGroupId)
+      assertThat(mappedPermission.grantor.id).isEqualTo(createPermissionDto.grantorId)
+      assertThat(mappedPermission.hostGroup.id).isEqualTo(createPermissionDto.hostGroupId)
       assertThat(mappedPermission.grantee).isEqualTo(createPermissionDto.grantee)
       assertThat(mappedPermission.granteeType.name).isEqualTo(createPermissionDto.granteeType)
       assertThat(mappedPermission.expirationTimeMinutes).isEqualTo(createPermissionDto.expirationTimeMinutes)

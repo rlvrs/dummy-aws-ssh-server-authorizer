@@ -1,17 +1,15 @@
 package dev.santos.awssshservermanager.mapper
 
+import UnitTestBase
 import dev.santos.awssshservermanager.dto.CreateTenantRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @SpringBootTest
-@ExtendWith(SpringExtension::class)
-class TenantMapperShould {
+class TenantMapperShould : UnitTestBase() {
   @Autowired
   lateinit var tenantMapper: TenantMapper
 

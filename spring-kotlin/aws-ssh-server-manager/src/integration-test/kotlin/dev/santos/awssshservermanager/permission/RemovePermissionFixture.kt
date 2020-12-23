@@ -1,7 +1,7 @@
 package dev.santos.awssshservermanager.permission
 
-import dev.santos.awssshservermanager.adapter.web.RemovePermissionRequest
-import dev.santos.awssshservermanager.adapter.web.RemovePermissionResponse
+import dev.santos.awssshservermanager.adapter.web.removepermission.RemovePermissionRequest
+import dev.santos.awssshservermanager.adapter.web.removepermission.RemovePermissionResponse
 import dev.santos.awssshservermanager.helper.objToJsonStr
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.http.MediaType

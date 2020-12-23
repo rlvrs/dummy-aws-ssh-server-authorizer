@@ -1,5 +1,6 @@
 package dev.santos.awssshservermanager.service
 
+import UnitTestBase
 import dev.santos.awssshservermanager.dto.CreateHostGroupDto
 import dev.santos.awssshservermanager.dto.CreateHostGroupPolicyDto
 import dev.santos.awssshservermanager.dto.CreateHostGroupPolicyMatcherDto
@@ -21,13 +22,11 @@ import org.mockito.BDDMockito.any
 import org.mockito.BDDMockito.given
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 
-@SpringBootTest
 @ExtendWith(SpringExtension::class)
-class HostGroupServiceShould {
+class HostGroupServiceShould : UnitTestBase() {
   @Mock
   private lateinit var hostGroupRepository: HostGroupRepository
 

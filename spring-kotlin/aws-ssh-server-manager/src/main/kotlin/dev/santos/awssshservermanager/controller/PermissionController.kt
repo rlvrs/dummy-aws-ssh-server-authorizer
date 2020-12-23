@@ -10,7 +10,9 @@ import java.net.URI
 import javax.validation.Valid
 
 @Controller
-class PermissionController(val permissionService: PermissionService) {
+class PermissionController(
+  val permissionService: PermissionService
+) {
   @PostMapping("/permission")
   fun createPermission(@Valid @RequestBody createPermissionDto: CreatePermissionDto): ResponseEntity<String> {
     val newPermissionId = permissionService.create(createPermissionDto)

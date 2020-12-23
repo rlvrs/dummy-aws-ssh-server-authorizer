@@ -1,5 +1,6 @@
 package dev.santos.awssshservermanager.service
 
+import UnitTestBase
 import dev.santos.awssshservermanager.dto.CreateTenantRequest
 import dev.santos.awssshservermanager.exception.DuplicateTenantException
 import dev.santos.awssshservermanager.mapper.TenantMapperImpl
@@ -7,7 +8,6 @@ import dev.santos.awssshservermanager.model.Tenant
 import dev.santos.awssshservermanager.repository.TenantRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.any
 import org.mockito.BDDMockito.given
 import org.mockito.InjectMocks
@@ -15,14 +15,10 @@ import org.mockito.Mock
 import org.mockito.Mockito.doThrow
 import org.mockito.Spy
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
 import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @SpringBootTest
-@ExtendWith(SpringExtension::class)
-@Import(TenantMapperImpl::class)
-class TenantServiceShould {
+class TenantServiceShould : UnitTestBase() {
   @Mock
   private lateinit var tenantRepository: TenantRepository
 

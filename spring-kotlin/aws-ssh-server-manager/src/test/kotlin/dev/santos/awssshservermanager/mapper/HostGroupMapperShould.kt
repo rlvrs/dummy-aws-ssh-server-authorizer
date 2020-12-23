@@ -1,21 +1,17 @@
 package dev.santos.awssshservermanager.mapper
 
+import UnitTestBase
 import dev.santos.awssshservermanager.dto.CreateHostGroupDto
 import dev.santos.awssshservermanager.dto.HostGroupMatcherDto
 import dev.santos.awssshservermanager.lib.aws.model.IamPolicy
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @SpringBootTest
-@ExtendWith(SpringExtension::class)
-@ComponentScan(basePackageClasses = [HostGroupMapperShould::class])
-class HostGroupMapperShould {
+class HostGroupMapperShould : UnitTestBase() {
   @Autowired
   lateinit var hostGroupMapper: HostGroupMapper
 

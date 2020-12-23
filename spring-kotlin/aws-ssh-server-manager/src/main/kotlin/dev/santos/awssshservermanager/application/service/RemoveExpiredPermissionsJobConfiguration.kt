@@ -11,14 +11,23 @@ data class RemoveExpiredPermissionsJobConfig(
 
 @Configuration
 class RemoveExpiredPermissionsJobConfiguration {
-  @Value("\${background-job.remove-expired-permissions.cron}")
+  @Value("\${background-job.remove-expired-permissions.cron:#{null}}")
   private val cronInput: String? = null
+
+  @Value("\${org.jobrunr.background-job-server.enabled}")
+  private val backgroundJobServerEnabled: Boolean? = null
 
   @Bean
   fun removeExpiredPermissionsJobConfig(): RemoveExpiredPermissionsJobConfig {
-    val cron = cronInput ?: throw IllegalArgumentException("[cron] expected for remove-expired-permissions job")
-    validateCronExpression(cron)
-    return RemoveExpiredPermissionsJobConfig(cron)
+    return when (backgroundJobServerEnabled) {
+      null -> throw IllegalArgumentException("[org.jobrunr.background-job-server.enabled] is mandatory")
+      true -> {
+        val cron = cronInput ?: throw IllegalArgumentException("[cron] expected for remove-expired-permissions job")
+        validateCronExpression(cron)
+        RemoveExpiredPermissionsJobConfig(cron)
+      }
+      else -> RemoveExpiredPermissionsJobConfig("")
+    }
   }
 
   private fun validateCronExpression(cron: String) {

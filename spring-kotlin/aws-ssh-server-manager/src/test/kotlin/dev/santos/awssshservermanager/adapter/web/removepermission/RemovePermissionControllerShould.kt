@@ -1,5 +1,6 @@
-package dev.santos.awssshservermanager.adapter.web
+package dev.santos.awssshservermanager.adapter.web.removepermission
 
+import UnitTestBase
 import dev.santos.awssshservermanager.application.port.input.RemovePermissionCommand
 import dev.santos.awssshservermanager.application.port.input.RemovePermissionUseCase
 import dev.santos.awssshservermanager.exception.PermissionNotFoundException
@@ -10,7 +11,6 @@ import dev.santos.awssshservermanager.model.GranteeType
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito
 import org.mockito.Spy
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,14 +18,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.http.MediaType
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
 
-@ExtendWith(SpringExtension::class)
 @WebMvcTest(controllers = [RemovePermissionController::class])
-@ComponentScan(basePackageClasses = [RemovePermissionControllerShould::class])
-class RemovePermissionControllerShould {
+@ComponentScan(basePackageClasses = [RemovePermissionController::class])
+class RemovePermissionControllerShould : UnitTestBase() {
   @Autowired
   lateinit var mockMvc: MockMvc
 
