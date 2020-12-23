@@ -22,6 +22,12 @@ background-job:
     cron: "0 * * * *" # Hourly
 
 
+migration:
+  insert-sysadmin:
+    enabled: true
+    password: "5Tr0ngP455!"
+
+
 spring:
   liquibase:
     url: jdbc:postgresql://localhost:5432/testdb

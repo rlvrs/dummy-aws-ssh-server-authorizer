@@ -6,7 +6,7 @@ import javax.validation.constraints.Positive
 import javax.validation.constraints.Size
 
 enum class CreateUserDtoRole {
-  ADMIN
+  ADMIN, SYSADMIN
 }
 
 data class CreateUserDto(
