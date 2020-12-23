@@ -1,5 +1,6 @@
 package dev.santos.awssshservermanager.service
 
+import UnitTestBase
 import dev.santos.awssshservermanager.adapter.persistence.PermissionRepository
 import dev.santos.awssshservermanager.dto.CreatePermissionDto
 import dev.santos.awssshservermanager.exception.DuplicatePermissionException
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.any
 import org.mockito.BDDMockito.anyLong
 import org.mockito.BDDMockito.given
@@ -25,13 +25,11 @@ import org.mockito.Mockito.doThrow
 import org.mockito.Spy
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.sql.SQLException
 import java.util.concurrent.TimeUnit
 
 @SpringBootTest
-@ExtendWith(SpringExtension::class)
-class PermissionServiceShould {
+class PermissionServiceShould : UnitTestBase() {
   @Mock
   private lateinit var policyManager: PolicyManager
 
@@ -51,6 +49,12 @@ class PermissionServiceShould {
   private lateinit var permissionService: PermissionService
 
   private val validCreatePermissionDto = CreatePermissionDto(
+    // tenantId = 1L,
+    // grantorId = 1L,
+    // hostGroupId = 1L,
+    // grantee = "grantee.username",
+    // granteeType = "USER",
+    // expirationTimeMinutes = TimeUnit.MINUTES.toMillis(10L)
     tenantId = 1L,
     grantorId = 1L,
     hostGroupId = 1L,

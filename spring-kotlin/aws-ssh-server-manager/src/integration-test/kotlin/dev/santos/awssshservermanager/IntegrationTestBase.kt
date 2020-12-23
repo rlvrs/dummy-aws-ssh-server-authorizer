@@ -4,6 +4,7 @@ import cloud.localstack.docker.LocalstackDockerExtension
 import cloud.localstack.docker.annotation.LocalstackDockerProperties
 import dev.santos.awssshservermanager.adapter.persistence.PermissionRepository
 import dev.santos.awssshservermanager.application.port.input.RemoveExpiredPermissionsUseCase
+import dev.santos.awssshservermanager.application.service.RemoveExpiredPermissionsJob
 import dev.santos.awssshservermanager.helper.PgsqlContainer
 import dev.santos.awssshservermanager.helper.lib.aws.iam.AwsAccessKey
 import dev.santos.awssshservermanager.helper.lib.aws.iam.AwsUserManager
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.ActiveProfiles
@@ -43,6 +45,10 @@ import org.springframework.test.web.servlet.MockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 abstract class IntegrationTestBase : PgsqlContainer {
+  // Not worth testing that the background jobs lib does its job
+  @MockBean
+  lateinit var removeExpiredPermissionsJob: RemoveExpiredPermissionsJob
+
   @Autowired
   lateinit var passwordEncoder: PasswordEncoder
 

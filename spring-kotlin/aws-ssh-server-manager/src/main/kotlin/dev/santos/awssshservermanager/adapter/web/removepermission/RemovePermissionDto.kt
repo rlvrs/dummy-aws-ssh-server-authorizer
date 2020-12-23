@@ -1,4 +1,4 @@
-package dev.santos.awssshservermanager.adapter.web
+package dev.santos.awssshservermanager.adapter.web.removepermission
 
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull

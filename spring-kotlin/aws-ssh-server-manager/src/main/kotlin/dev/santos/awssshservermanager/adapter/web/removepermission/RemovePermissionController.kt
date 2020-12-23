@@ -1,4 +1,4 @@
-package dev.santos.awssshservermanager.adapter.web
+package dev.santos.awssshservermanager.adapter.web.removepermission
 
 import dev.santos.awssshservermanager.application.port.input.RemovePermissionUseCase
 import org.springframework.http.ResponseEntity

@@ -1,5 +1,6 @@
 package dev.santos.awssshservermanager.service
 
+import UnitTestBase
 import dev.santos.awssshservermanager.dto.CreateUserDto
 import dev.santos.awssshservermanager.dto.CreateUserDtoRole
 import dev.santos.awssshservermanager.exception.DuplicateUserException
@@ -10,20 +11,19 @@ import dev.santos.awssshservermanager.repository.UserRepository
 import org.hibernate.exception.ConstraintViolationException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.any
 import org.mockito.BDDMockito.given
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.doThrow
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.sql.SQLException
 
 @SpringBootTest
-@ExtendWith(SpringExtension::class)
-class UserServiceShould {
+@ComponentScan(basePackageClasses = [UserServiceShould::class])
+class UserServiceShould : UnitTestBase() {
   @Mock
   private lateinit var userRepository: UserRepository
 

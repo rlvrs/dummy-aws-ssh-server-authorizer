@@ -1,5 +1,6 @@
 package dev.santos.awssshservermanager.controller
 
+import UnitTestBase
 import com.google.gson.Gson
 import dev.santos.awssshservermanager.dto.CreateUserDto
 import dev.santos.awssshservermanager.dto.CreateUserDtoRole
@@ -12,19 +13,16 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 
-@ExtendWith(SpringExtension::class)
 @WebMvcTest(controllers = [UserController::class])
-class UserControllerShould {
+class UserControllerShould : UnitTestBase() {
   @Autowired
   lateinit var mockMvc: MockMvc
 

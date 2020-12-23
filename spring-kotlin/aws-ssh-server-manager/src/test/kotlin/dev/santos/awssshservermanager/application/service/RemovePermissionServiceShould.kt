@@ -1,5 +1,6 @@
 package dev.santos.awssshservermanager.application.service
 
+import UnitTestBase
 import dev.santos.awssshservermanager.application.port.input.RemovePermissionCommand
 import dev.santos.awssshservermanager.application.port.output.GetAwsCredentialsPort
 import dev.santos.awssshservermanager.application.port.output.GetHostGroupPort
@@ -15,18 +16,15 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.ComponentScan
-import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @SpringBootTest
-@ExtendWith(SpringExtension::class)
 @ComponentScan(basePackageClasses = [RemovePermissionServiceShould::class])
-class RemovePermissionServiceShould {
+class RemovePermissionServiceShould : UnitTestBase() {
   @Mock
   private lateinit var policyManager: PolicyManager
 

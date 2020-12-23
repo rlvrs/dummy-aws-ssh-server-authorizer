@@ -1,7 +1,9 @@
 org:
   jobrunr:
-    background-job-server.enabled=false
-    dashboard.enabled=false
+    background-job-server:
+      enabled: false
+    dashboard:
+      enabled: false
 
 
 spring:

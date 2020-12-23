@@ -18,7 +18,7 @@ class RemoveExpiredPermissionsService(
         RemovePermissionCommand(
           id = it.id,
           tenantId = it.tenantId,
-          hostGroupId = it.hostGroupId,
+          hostGroupId = it.hostGroup.id,
           grantee = it.grantee,
           granteeType = it.granteeType
         )

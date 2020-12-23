@@ -46,7 +46,7 @@ class PermissionService(
   private fun attachUserPolicy(permission: Permission) {
     policyManager.attachUserPolicy(
       awsCredentials = tenantService.getCredentials(permission.tenantId),
-      arn = hostGroupService.getHostGroupById(permission.hostGroupId).policyArn,
+      arn = hostGroupService.getHostGroupById(permission.hostGroup.id).policyArn,
       userName = permission.grantee
     )
   }

@@ -29,7 +29,7 @@ class HostGroup(
   var name: String = "",
   @Type(type = "jsonb")
   @Column(columnDefinition = "jsonb")
-  var matchers: List<HostGroupMatcher>,
+  var matchers: List<HostGroupMatcher> = listOf(),
   var policyArn: String = "",
   var policyVersionId: String = ""
 )

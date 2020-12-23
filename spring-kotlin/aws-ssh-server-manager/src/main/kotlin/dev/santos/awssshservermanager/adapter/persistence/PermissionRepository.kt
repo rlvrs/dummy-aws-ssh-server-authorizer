@@ -30,4 +30,17 @@ interface PermissionRepository : JpaRepository<Permission, Long> {
     nativeQuery = true
   )
   fun findAllExpired(): List<Permission>
+
+  @Query(
+    "SELECT * " +
+      "FROM permission p " +
+      "JOIN users u ON p.grantor_id=u.id " +
+      "JOIN host_group hg ON p.host_group_id=hg.id " +
+      "WHERE p.tenant_id = :tenant_id " +
+      "AND created_ts + expiration_time_minutes * interval '1 minute' > timezone('utc', now())",
+    nativeQuery = true
+  )
+  fun findValidPermissions(
+    @Param("tenant_id") tenantId: Long
+  ): List<Permission>
 }
